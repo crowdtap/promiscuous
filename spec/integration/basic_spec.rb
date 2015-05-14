@@ -78,4 +78,17 @@ describe Promiscuous do
       eventually { SubscriberModel.count.should == 0 }
     end
   end
+
+  context 'when a database operation fails' do
+    it 'does not replicate' do
+      PublisherModel.collection.indexes.create({:field_1 => 1}, :unique => 1)
+
+      PublisherModel.create(:field_1 => '1')
+      PublisherModel.create(:field_1 => '1') rescue nil
+
+      sleep 1
+
+      SubscriberModel.count.should == 1
+    end
+  end
 end
