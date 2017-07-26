@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ruby-progressbar",             "~> 1.2.0"
   s.add_dependency "redis",                        "~> 3.0"
   s.add_dependency "fnv",                          "0.2.0"
-  s.add_dependency "multi_json",                   "~> 1.10"
+  s.add_dependency "multi_json",                   "~> 1.8.0"
   s.add_dependency "robust-redis-lock",            "~> 1.3.0"
 
   s.files        = Dir["lib/**/*"] + Dir["bin/**/*"]
