@@ -18,7 +18,8 @@ class Promiscuous::Backend::Poseidon
                                           :max_send_retries => 10,
                                           :retry_backoff_ms => 100,
                                           :required_acks => 1,
-                                          :ack_timeout_ms => 2000,
+                                          #:ack_timeout_ms => 2000,
+                                          :ack_timeout_ms => 10_000,
                                           :socket_timeout_ms => 10_000)
   end
 
@@ -57,10 +58,17 @@ class Promiscuous::Backend::Poseidon
     raise Promiscuous::Error::Publisher.new(e, :payload => options[:payload])
   end
 
-  def publish(options={})
+  def publish(options={}, retries = 0)
     @connection_lock.synchronize do
       raw_publish(options)
       options[:on_confirm].call if options[:on_confirm] && Promiscuous::Config.backend == :poseidon
+    end
+  rescue Errno::ETIMEDOUT => e
+    Promiscuous.warn("[publish] kafka connection timed out #{e}\n#{e.backtrace.join("\n")}")
+    if retries < 5
+      disconnect
+      new_connection
+      publish(options, retries + 1)
     end
   rescue StandardError => e
     Promiscuous.warn("[publish] Failure publishing to kafka #{e}\n#{e.backtrace.join("\n")}")
