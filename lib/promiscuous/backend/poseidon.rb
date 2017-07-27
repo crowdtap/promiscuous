@@ -63,9 +63,16 @@ class Promiscuous::Backend::Poseidon
       raw_publish(options)
       options[:on_confirm].call if options[:on_confirm] && Promiscuous::Config.backend == :poseidon
     end
+  rescue RuntimeError => e
+    Promiscuous.warn("[publish] kafka failed to publish #{e}\n#{e.backtrace.join("\n")}")
+    if retries < 6
+      disconnect
+      new_connection
+      publish(options, retries + 1)
+    end
   rescue Errno::ETIMEDOUT => e
     Promiscuous.warn("[publish] kafka connection timed out #{e}\n#{e.backtrace.join("\n")}")
-    if retries < 5
+    if retries < 6
       disconnect
       new_connection
       publish(options, retries + 1)
