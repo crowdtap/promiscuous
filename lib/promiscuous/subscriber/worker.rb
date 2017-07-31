@@ -10,7 +10,7 @@ class Promiscuous::Subscriber::Worker
 
     @stats = Stats.new
     @eventual_destroyer = EventualDestroyer.new
-    STDOUT.puts "initializing worker #{self.object_id}"
+    Promiscuous.info "initializing worker #{self.object_id}"
 
     backend_subscriber_initialize(self)
   end
@@ -18,7 +18,7 @@ class Promiscuous::Subscriber::Worker
   def start
     @stats.connect
     @eventual_destroyer.try(:start)
-    STDOUT.puts "Starting worker #{self.object_id}"
+    Promiscuous.info "Starting worker #{self.object_id}"
 
     backend_subscriber_start
   end
