@@ -157,10 +157,12 @@ class Promiscuous::Backend::Poseidon
 
     module Worker
       def backend_subscriber_initialize(subscriber_worker)
+        Promiscuous.debug "initializing subscriber worker #{subscriber_worker}"
         @distributor = Promiscuous::Subscriber::Worker::Distributor.new(subscriber_worker)
       end
 
       def backend_subscriber_start
+        Promiscuous.debug "starting subscriber worker"
         @distributor.start
       end
 

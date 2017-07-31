@@ -94,6 +94,7 @@ class Promiscuous::CLI
   end
 
   def subscribe
+    print_status "starting workers"
     @worker = Promiscuous::Subscriber::Worker.new
     @worker.start
     Promiscuous::Config.subscriber_threads.tap do |threads|
