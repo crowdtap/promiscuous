@@ -75,12 +75,12 @@ module Promiscuous::Config
     self.publisher_lock_expiration ||= 5.seconds
     self.publisher_lock_timeout ||= 2.seconds
     self.recovery_interval    ||= 5.seconds
-    self.logger               ||= defined?(Rails) ? Rails.logger : Logger.new(STDERR).tap { |l| l.level = Logger::WARN }
+    self.logger               ||= defined?(Rails) ? Rails.logger : Logger.new(STDOUT).tap { |l| l.level = Logger::INFO }
     self.subscriber_threads   ||= 1
     self.error_notifier       ||= proc {}
     self.version_field        ||= '_v'
     self.on_stats             ||= proc { |rate, latency| }
-    self.max_retries          ||= defined?(Rails) ? Rails.env.production? ? 10 : 0 : 10
+    self.max_retries          ||= 10 #defined?(Rails) ? Rails.env.production? ? 10 : 0 : 10
     self.generation           ||= 0
     self.destroy_timeout      ||= 1.hour
     self.destroy_check_interval ||= 10.minutes

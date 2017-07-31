@@ -240,6 +240,6 @@ class Promiscuous::CLI
 
   def print_status(msg)
     Promiscuous.info msg
-    STDERR.puts msg
+    STDOUT.puts msg
   end
 end

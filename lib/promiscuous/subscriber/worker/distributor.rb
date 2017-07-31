@@ -8,9 +8,9 @@ class Promiscuous::Subscriber::Worker::Distributor
     num_threads = Promiscuous::Config.subscriber_threads
     Promiscuous::Config.subscriber_topics.each do |topic|
       num_threads.times { @distributor_threads << DistributorThread.new(topic) }
-      Promiscuous.info "[distributor] Started #{num_threads} thread#{'s' if num_threads>1} topic:#{topic}"
+      Promiscuous.debug "[distributor] Started #{num_threads} thread#{'s' if num_threads>1} topic:#{topic}"
     end
-    Promiscuous.info "[distributor] Started #{@distributor_threads.count} total threads"
+    Promiscuous.debug "[distributor] Started #{@distributor_threads.count} total threads"
   end
 
   def stop

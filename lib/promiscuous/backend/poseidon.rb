@@ -43,7 +43,7 @@ class Promiscuous::Backend::Poseidon
   def raw_publish(options)
     tries ||= 5
     if @connection.send_messages([Poseidon::MessageToSend.new(options[:topic], options[:payload], options[:topic_key])])
-      Promiscuous.debug "[publish] [kafka] #{options[:topic]}/#{options[:topic_key]} #{options[:payload]}"
+      Promiscuous.debug "[publish] [kafka] #{options[:topic]}||#{options[:topic_key]} #{options[:payload]}"
     else
       raise Promiscuous::Error::Publisher.new(Exception.new('There were no messages to publish?'), :payload => options[:payload])
     end
