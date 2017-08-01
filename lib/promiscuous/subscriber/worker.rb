@@ -7,10 +7,10 @@ class Promiscuous::Subscriber::Worker
   def initialize
     # inject what we need for our backend
     extend Promiscuous::Backend.subscriber_methods
-    Promiscuous.info "initializing worker"
+    puts "initializing worker"
     @stats = Stats.new
     @eventual_destroyer = EventualDestroyer.new
-    Promiscuous.info "initializing worker"
+    puts "initializing worker after blah"
 
     backend_subscriber_initialize(self)
   end
@@ -18,7 +18,7 @@ class Promiscuous::Subscriber::Worker
   def start
     @stats.connect
     @eventual_destroyer.try(:start)
-    Promiscuous.info "Starting worker #{self.object_id}"
+    puts "Starting worker #{self.object_id}"
 
     backend_subscriber_start
   end
