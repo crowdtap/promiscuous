@@ -119,6 +119,7 @@ class Promiscuous::Backend::Poseidon
         :claim_timeout     => 600, # s
         :trail             => Promiscuous::Config.test_mode
       }
+      puts "making a consumer for topic #{options[:topic]}"
       @consumer = ::Poseidon::ConsumerGroup.new(consumer_group_name,
                                                 Promiscuous::Config.kafka_hosts,
                                                 Promiscuous::Config.zookeeper_hosts,
