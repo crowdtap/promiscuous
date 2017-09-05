@@ -119,7 +119,7 @@ class Promiscuous::Backend::Poseidon
         :claim_timeout     => 600, # s
         :trail             => Promiscuous::Config.test_mode
       }
-      puts "making a consumer for topic #{options[:topic]}"
+      Promiscuous.debug "making a consumer for topic #{options[:topic]}"
       @consumer = ::Poseidon::ConsumerGroup.new(consumer_group_name,
                                                 Promiscuous::Config.kafka_hosts,
                                                 Promiscuous::Config.zookeeper_hosts,
@@ -131,7 +131,7 @@ class Promiscuous::Backend::Poseidon
       # commit our offset after we process payloads rather than one at a time
       @consumer.fetch(:commit => true) do |partition, payloads|
         payloads.each do |payload|
-          puts "[kafka] [receive] #{payload.value} topic:#{@consumer.topic} offset:#{payload.offset} parition:#{partition} #{Thread.current.object_id}"
+          Promiscuous.debug "[kafka] [receive] #{payload.value} topic:#{@consumer.topic} offset:#{payload.offset} parition:#{partition} #{Thread.current.object_id}"
           block.call(MetaData.new(@consumer, partition, payload.offset), payload)
         end
       end
@@ -148,22 +148,22 @@ class Promiscuous::Backend::Poseidon
         @partition = partition
         @offset = offset
 
-        puts "[kafka] [metadata] topic:#{@consumer.topic} offset:#{offset} partition:#{partition}"
+        Promiscuous.debug "[kafka] [metadata] topic:#{@consumer.topic} offset:#{offset} partition:#{partition}"
       end
 
       def ack
-        puts "[kafka] [commit] topic:#{@consumer.topic} offset:#{@offset+1} partition:#{@partition}"
+        Promiscuous.debug "[kafka] [commit] topic:#{@consumer.topic} offset:#{@offset+1} partition:#{@partition}"
       end
     end
 
     module Worker
       def backend_subscriber_initialize(subscriber_worker)
-        puts "initializing subscriber worker #{subscriber_worker}"
+        Promiscuous.debug "initializing subscriber worker #{subscriber_worker}"
         @distributor = Promiscuous::Subscriber::Worker::Distributor.new(subscriber_worker)
       end
 
       def backend_subscriber_start
-        puts "starting subscriber worker"
+        Promiscuous.debug "starting subscriber worker"
         @distributor.start
       end
 
