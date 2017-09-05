@@ -130,7 +130,6 @@ class Promiscuous::Backend::Poseidon
     def fetch_and_process_messages(&block)
       # commit our offset after we process payloads rather than one at a time
       @consumer.fetch(:commit => true) do |partition, payloads|
-        Promiscuous.debug "[kafka] fetching messages from #{@consumer.topic} #{Thread.current.object_id}"
         payloads.each do |payload|
           Promiscuous.debug "[kafka] [receive] #{payload.value} topic:#{@consumer.topic} offset:#{payload.offset} parition:#{partition} #{Thread.current.object_id}"
           block.call(MetaData.new(@consumer, partition, payload.offset), payload)
