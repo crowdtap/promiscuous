@@ -49,7 +49,6 @@ class Promiscuous::Subscriber::Worker::Distributor
       @consumer = subscribe(:topic => topic)
       while not @stop do
         begin
-          Promiscuous.debug "[kafka] fetching messages for #{topic}"
           fetch_and_process_messages(&method(:on_message))
         rescue Poseidon::Connection::ConnectionFailedError
           Promiscuous.debug "[kafka] Reconnecting... [#{@thread.object_id}]"
