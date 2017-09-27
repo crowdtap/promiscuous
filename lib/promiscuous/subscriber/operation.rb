@@ -38,6 +38,7 @@ class Promiscuous::Subscriber::Operation
       instance.save!
     end
   rescue StandardError => e
+    Promiscuous.debug "Promiscuous create model error #{model} options #{options} error #{e}"
     if model.__promiscuous_duplicate_key_exception?(e)
       options[:on_already_created] ||= proc { warn "ignoring already created record" }
       options[:on_already_created].call
@@ -56,6 +57,9 @@ class Promiscuous::Subscriber::Operation
   rescue model.__promiscuous_missing_record_exception
     warn "upserting"
     create :on_already_created => proc { update(false) if should_create_on_failure }
+  rescue StandardError => e
+    Promiscuous.debug "Promiscuous create model error #{model} error #{e}"
+    raise e
   end
 
   def destroy
@@ -63,6 +67,9 @@ class Promiscuous::Subscriber::Operation
     model.__promiscuous_fetch_existing(id).destroy
   rescue model.__promiscuous_missing_record_exception
     warn "record doesn't exist"
+  rescue StandardError => e
+    Promiscuous.debug "Promiscuous destroy model error #{model} error #{e}"
+    raise e
   end
 
   def execute
