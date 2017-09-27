@@ -43,7 +43,7 @@ class Promiscuous::Backend::Poseidon
   def raw_publish(options)
     tries ||= 5
     if @connection.send_messages([Poseidon::MessageToSend.new(options[:topic], options[:payload], options[:topic_key])])
-      Promiscuous.info "[publish] [kafka] #{options[:topic]}||#{options[:topic_key]} #{options[:payload]}"
+      Promiscuous.debug "[publish] [kafka] #{options[:topic]}||#{options[:topic_key]} #{options[:payload]}"
     else
       raise Promiscuous::Error::Publisher.new(Exception.new('There were no messages to publish?'), :payload => options[:payload])
     end
@@ -119,7 +119,7 @@ class Promiscuous::Backend::Poseidon
         :claim_timeout     => 600, # s
         :trail             => Promiscuous::Config.test_mode
       }
-      Promiscuous.info "making a consumer for topic #{options[:topic]}"
+      Promiscuous.debug "making a consumer for topic #{options[:topic]}"
       @consumer = ::Poseidon::ConsumerGroup.new(consumer_group_name,
                                                 Promiscuous::Config.kafka_hosts,
                                                 Promiscuous::Config.zookeeper_hosts,
@@ -131,7 +131,7 @@ class Promiscuous::Backend::Poseidon
       # commit our offset after we process payloads rather than one at a time
       @consumer.fetch(:commit => true) do |partition, payloads|
         payloads.each do |payload|
-          Promiscuous.info "[kafka] [receive] #{payload.value} topic:#{@consumer.topic} offset:#{payload.offset} parition:#{partition} #{Thread.current.object_id}"
+          Promiscuous.debug "[kafka] [receive] #{payload.value} topic:#{@consumer.topic} offset:#{payload.offset} parition:#{partition} #{Thread.current.object_id}"
           block.call(MetaData.new(@consumer, partition, payload.offset), payload)
         end
       end
@@ -148,22 +148,22 @@ class Promiscuous::Backend::Poseidon
         @partition = partition
         @offset = offset
 
-        Promiscuous.info "[kafka] [metadata] topic:#{@consumer.topic} offset:#{offset} partition:#{partition}"
+        Promiscuous.debug "[kafka] [metadata] topic:#{@consumer.topic} offset:#{offset} partition:#{partition}"
       end
 
       def ack
-        Promiscuous.info "[kafka] [commit] topic:#{@consumer.topic} offset:#{@offset+1} partition:#{@partition}"
+        Promiscuous.debug "[kafka] [commit] topic:#{@consumer.topic} offset:#{@offset+1} partition:#{@partition}"
       end
     end
 
     module Worker
       def backend_subscriber_initialize(subscriber_worker)
-        Promiscuous.info "initializing subscriber worker #{subscriber_worker}"
+        Promiscuous.debug "initializing subscriber worker #{subscriber_worker}"
         @distributor = Promiscuous::Subscriber::Worker::Distributor.new(subscriber_worker)
       end
 
       def backend_subscriber_start
-        Promiscuous.info "starting subscriber worker"
+        Promiscuous.debug "starting subscriber worker"
         @distributor.start
       end
 
