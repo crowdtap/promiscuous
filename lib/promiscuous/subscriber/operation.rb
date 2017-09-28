@@ -36,6 +36,7 @@ class Promiscuous::Subscriber::Operation
       instance.__promiscuous_eventual_consistency_update(self)
       instance.__promiscuous_update(self)
       instance.save!
+      warn("successful creation #{options}")
     end
   rescue StandardError => e
     Promiscuous.debug "Promiscuous create model error #{model} options #{options} error #{e}"
@@ -52,6 +53,7 @@ class Promiscuous::Subscriber::Operation
       if instance.__promiscuous_eventual_consistency_update(self)
         instance.__promiscuous_update(self)
         instance.save!
+        warn("successful update #{options}")
       end
     end
   rescue model.__promiscuous_missing_record_exception

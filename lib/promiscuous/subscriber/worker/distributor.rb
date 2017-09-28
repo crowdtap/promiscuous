@@ -53,6 +53,8 @@ class Promiscuous::Subscriber::Worker::Distributor
         rescue Poseidon::Connection::ConnectionFailedError
           Promiscuous.debug "[kafka] Reconnecting... [#{@thread.object_id}]"
           @consumer = subscribe(@topic)
+        rescue => e
+          Promiscuous.debug "PROMISCUOUS MAIN LOOP ERROR #{e.to_s}"
         end
         sleep 0.1
       end

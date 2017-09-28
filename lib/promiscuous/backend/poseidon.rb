@@ -120,11 +120,20 @@ class Promiscuous::Backend::Poseidon
         :trail             => Promiscuous::Config.test_mode
       }
       Promiscuous.debug "making a consumer for topic #{options[:topic]}"
-      @consumer = ::Poseidon::ConsumerGroup.new(consumer_group_name,
-                                                Promiscuous::Config.kafka_hosts,
-                                                Promiscuous::Config.zookeeper_hosts,
-                                                options[:topic],
-                                                consumer_opts)
+      begin
+        @consumer = ::Poseidon::ConsumerGroup.new(consumer_group_name,
+                                                  Promiscuous::Config.kafka_hosts,
+                                                  Promiscuous::Config.zookeeper_hosts,
+                                                  options[:topic],
+                                                  consumer_opts)
+
+        partitions = @consumer.partitions.map {|part| [part, @consumer.offset(part)]}
+        Promiscuous.debug "New Kafka Consumer Group id: #{@consumer.id} claimed: #{@consumer.claimed} partition offsets: #{partitions} listening to: #{@consumer.partitions}"
+        @consumer
+      rescue => e
+        Promiscuous.warn "Connecting to Kafka failed #{e.to_s}"
+        raise e
+      end
     end
 
     def fetch_and_process_messages(&block)
