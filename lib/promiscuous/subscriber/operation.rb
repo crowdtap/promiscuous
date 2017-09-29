@@ -53,7 +53,7 @@ class Promiscuous::Subscriber::Operation
       if instance.__promiscuous_eventual_consistency_update(self)
         instance.__promiscuous_update(self)
         instance.save!
-        warn("successful update #{options}")
+        warn("successful update")
       end
     end
   rescue model.__promiscuous_missing_record_exception
